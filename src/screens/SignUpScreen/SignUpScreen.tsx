@@ -17,6 +17,7 @@ const SignUpScreen: React.FC = () => {
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+  const [confirmPassword, setConfirmPassword] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const handleLogin = () => {
@@ -34,6 +35,10 @@ const SignUpScreen: React.FC = () => {
     }
     if (password === '') {
       setErrorMessage('Please enter password');
+      return;
+    }
+    if (password !== confirmPassword) {
+      setErrorMessage('Password and confirm password should be same');
       return;
     }
     try {
@@ -64,6 +69,12 @@ const SignUpScreen: React.FC = () => {
             label="Create password"
             value={password}
             onChangeText={setPassword}
+            secureTextEntry
+          />
+          <Input
+            label="Confirm password"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
             secureTextEntry
           />
 
