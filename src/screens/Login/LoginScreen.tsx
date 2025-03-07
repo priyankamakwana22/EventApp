@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {View} from 'react-native';
+import {Pressable, View} from 'react-native';
 import {Card, Text} from 'react-native-paper';
 import {loginStyles} from './LoginScreen.style';
 import Button from '../../component/Button/Button';
@@ -37,6 +37,9 @@ const LoginScreen = () => {
     replace(route.SIGN_UP_SCREEN);
   };
 
+  const forgotPassword = () => {
+    replace(route.FORGOT_PASSWORD);
+  };
   return (
     <View style={styles.container}>
       <Card style={styles.card}>
@@ -58,9 +61,16 @@ const LoginScreen = () => {
             onChangeText={setPassword}
             secureTextEntry
           />
+
           {errorMessage ? (
             <Text style={styles.errorText}>{errorMessage}</Text>
           ) : null}
+
+          <Pressable onPress={forgotPassword}>
+            <Text style={styles.forgotPasswordText}>
+              {strings.FORGOT_PASSWORD_Q}
+            </Text>
+          </Pressable>
 
           <Button
             style={styles.buttonStyle}

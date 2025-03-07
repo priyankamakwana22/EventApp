@@ -1,7 +1,7 @@
 import {StyleSheet} from 'react-native';
 import {moderateScale, scaledSize} from '../../utils';
 
-export const loginStyles = () =>
+export const forgotPasswordStyles = () =>
   StyleSheet.create({
     container: {
       flex: 1,
@@ -18,9 +18,13 @@ export const loginStyles = () =>
       marginBottom: 20,
       fontWeight: 'bold',
     },
-    forgotPasswordText: {
+    subTitle: {
+      marginBottom: 20,
+      fontWeight: 'bold',
+    },
+    backToLoginText: {
       marginBottom: 10,
-      textAlign: 'right',
+      textAlign: 'center',
       fontWeight: 'bold',
       color: 'blue',
     },
