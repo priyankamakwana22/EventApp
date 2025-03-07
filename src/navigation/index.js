@@ -7,6 +7,7 @@ import SignUpScreen from '../screens/SignUpScreen/SignUpScreen';
 import HomeScreen from '../screens/HomeScreen/HomeScreen';
 import {navigationRef} from './NavigationService';
 import ForgotPassword from '../screens/ForgotPassword/ForgotPassword';
+import CreateEvent from '../screens/CreateEvent/CreateEvent';
 
 const Stack = createStackNavigator();
 
@@ -19,6 +20,7 @@ const Navigation = () => {
         <Stack.Screen name={route.HOME_SCREEN} component={HomeScreen} />
         <Stack.Screen name={route.SIGN_UP_SCREEN} component={SignUpScreen} />
         <Stack.Screen name={route.FORGOT_PASSWORD} component={ForgotPassword} />
+        <Stack.Screen name={route.CREATE_EVENT} component={CreateEvent} />
       </Stack.Navigator>
     </NavigationContainer>
   );

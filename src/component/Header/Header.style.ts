@@ -9,8 +9,6 @@ export const headerStyles = () =>
       paddingHorizontal: moderateScale(20),
     },
     pressableView: {
-      borderColor: 'black',
-      borderWidth: 1,
       alignItems: 'center',
       justifyContent: 'center',
       paddingHorizontal: 5,
