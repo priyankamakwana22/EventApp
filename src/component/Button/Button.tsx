@@ -1,13 +1,13 @@
 import React from 'react';
 import {Pressable, StyleProp, Text, ViewStyle} from 'react-native';
 import {buttonStyles} from './Button.style';
-import {color} from '../../utils';
+import {useTheme} from '../../utils/Theme/useTheme';
 
 interface ButtonProps {
   title: string;
   onPress: () => void;
-  mode?: 'contained' | 'outlined' | 'text'; // Default is "contained"
-  style?: StyleProp<ViewStyle>; // Allows custom styles
+  mode?: 'contained' | 'outlined' | 'text';
+  style?: StyleProp<ViewStyle>;
 }
 
 const CustomButton: React.FC<ButtonProps> = ({
@@ -16,14 +16,15 @@ const CustomButton: React.FC<ButtonProps> = ({
   mode = 'contained',
   style,
 }) => {
-  const styles = buttonStyles();
+  const {theme} = useTheme();
+  const styles = buttonStyles(theme);
   return (
     <Pressable
       onPress={onPress}
       style={({pressed}) => [
         styles.button,
-        styles[mode], // Apply mode-specific styles
-        pressed && styles.pressed, // Apply pressed state effect
+        styles[mode],
+        pressed && styles.pressed,
         style,
       ]}>
       <Text style={[styles.text, mode === 'outlined' && styles.outlinedText]}>

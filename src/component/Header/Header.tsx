@@ -6,7 +6,7 @@ interface HeaderProps {
   leftComponent?: React.ReactNode;
   bodyComponent?: React.ReactNode;
   rightComponent?: React.ReactNode;
-  onPressRight: () => void;
+  onPressRight?: () => void;
 }
 
 const Header: React.FC<HeaderProps> = ({

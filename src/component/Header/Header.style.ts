@@ -11,11 +11,8 @@ export const headerStyles = () =>
     pressableView: {
       alignItems: 'center',
       justifyContent: 'center',
-      paddingHorizontal: 5,
-      paddingVertical: 2,
+      paddingHorizontal: moderateScale(5),
+      paddingVertical: moderateScale(2),
       borderRadius: 5,
     },
-    left: {},
-    body: {},
-    right: {},
   });

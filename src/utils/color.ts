@@ -1,20 +1,23 @@
-import {ColorSchemeName} from 'react-native';
+import {Theme} from './Theme/themeTypes';
 
-export const color = {
-  dark: {
-    backgroundColor: '#212121', // light grey
-    primaryColor: '#0a84ff', // bright blue
-    secondaryColor: '#dcdcdc', // dark grey
-    textColor: '#f8f9fa', // off-white
-  },
-  light: {
-    backgroundColor: '#f8f9fa', // grey
-    primaryColor: '#000080', // blue
-    secondaryColor: '#6c757d', // off-white
-    textColor: '#343a40', // dark grey
-  },
+export const dark: Theme = {
+  backgroundColor: '#F7F7F7',
+  primaryColor: '#6200ee',
+  textColor: '#000000',
+  errorColor: '#FF2C2C',
+  linkColor: '#0000FF',
+  inputBorderColor: '#ccc',
+  pickerBackgroundColor: '#dddddd',
 };
 
-export type Palette = (typeof color)[keyof typeof color];
+export const light: Theme = {
+  backgroundColor: '#F7F7F7',
+  primaryColor: '#6200ee',
+  textColor: '#000000',
+  errorColor: '#FF2C2C',
+  linkColor: '#0000FF',
+  inputBorderColor: '#ccc',
+  pickerBackgroundColor: '#dddddd',
+};
 
-export type Theme = ColorSchemeName | keyof typeof color;
+export const themes = {light, dark};

@@ -1,36 +1,34 @@
 import {StyleSheet} from 'react-native';
-import {Palette} from '../../utils';
+import {moderateScale, scaledSize, scaleWidth} from '../../utils';
+import {Theme} from '../../utils/Theme/themeTypes';
 
-export const buttonStyles = () =>
+export const buttonStyles = (theme: Theme) =>
   StyleSheet.create({
     button: {
-      paddingVertical: 12,
-      paddingHorizontal: 20,
+      paddingVertical: moderateScale(12),
+      paddingHorizontal: moderateScale(20),
       borderRadius: 8,
       alignItems: 'center',
       justifyContent: 'center',
-      minWidth: 120,
+      minWidth: scaleWidth(120),
     },
     contained: {
-      backgroundColor: '#6200ee',
+      backgroundColor: theme.backgroundColor,
     },
     outlined: {
       borderWidth: 1,
-      borderColor: '#6200ee',
-      backgroundColor: 'transparent',
-    },
-    text: {
+      borderColor: theme.backgroundColor,
       backgroundColor: 'transparent',
     },
     pressed: {
       opacity: 0.7,
     },
     text: {
-      fontSize: 16,
+      fontSize: scaledSize(16),
       fontWeight: 'bold',
-      color: '#fff', // Default text color for contained
+      color: theme.backgroundColor,
     },
     outlinedText: {
-      color: '#6200ee',
+      color: theme.primaryColor,
     },
   });

@@ -8,12 +8,14 @@ import {route} from '../../navigation/constants';
 import {strings} from '../../utils/strings';
 import {replace} from '../../navigation/NavigationService';
 import {getAuth, signInWithEmailAndPassword} from '@react-native-firebase/auth';
+import {useTheme} from '../../utils/Theme/useTheme';
 
 const LoginScreen = () => {
-  const styles = loginStyles();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const {theme} = useTheme();
+  const styles = loginStyles(theme);
 
   const handleLogin = async () => {
     if (email === '') {

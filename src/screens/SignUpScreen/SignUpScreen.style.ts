@@ -1,19 +1,14 @@
 import {StyleSheet} from 'react-native';
-import {
-  moderateScale,
-  Palette,
-  scaledSize,
-  scaleHeight,
-  scaleWidth,
-} from '../../utils';
+import {moderateScale} from '../../utils';
+import {Theme} from '../../utils/Theme/themeTypes';
 
-export const SignUpStyles = () =>
+export const SignUpStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
       justifyContent: 'center',
       padding: moderateScale(20),
-      backgroundColor: '#f5f5f5',
+      backgroundColor: theme.backgroundColor,
     },
     card: {
       paddingHorizontal: moderateScale(20),
@@ -24,6 +19,6 @@ export const SignUpStyles = () =>
       marginBottom: moderateScale(20),
       fontWeight: 'bold',
     },
-    errorText: {color: 'red', marginTop: 10},
+    errorText: {color: theme.errorColor, marginTop: moderateScale(10)},
     buttonStyle: {marginVertical: moderateScale(25)},
   });

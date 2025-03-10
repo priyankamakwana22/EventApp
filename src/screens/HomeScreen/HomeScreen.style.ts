@@ -1,28 +1,30 @@
 import {StyleSheet} from 'react-native';
-import {scaledSize, scaleHeight, scaleWidth} from '../../utils';
+import {moderateScale, scaledSize, scaleHeight, scaleWidth} from '../../utils';
+import {Theme} from '../../utils/Theme/themeTypes';
 
-export const HomeScreenStyles = () =>
+export const HomeScreenStyles = (theme: Theme) =>
   StyleSheet.create({
+    container: {flex: 1},
     headerRight: {
       flexDirection: 'row',
-      gap: 10,
+      gap: moderateScale(10),
     },
-    userNameText: {fontSize: 20, fontWeight: 'bold'},
+    userNameText: {fontSize: scaledSize(20), fontWeight: 'bold'},
     button: {
       paddingVertical: scaleHeight(6),
       paddingHorizontal: scaleWidth(12),
-      backgroundColor: '#007AFF',
+      backgroundColor: theme.primaryColor,
       borderRadius: 6,
     },
     buttonText: {
-      color: '#FFF',
+      color: theme.primaryColor,
       fontWeight: 'bold',
     },
     floatingButton: {
       position: 'absolute',
-      bottom: 30,
-      right: 20,
-      backgroundColor: '#007AFF',
+      bottom: scaleHeight(30),
+      right: scaleHeight(20),
+      backgroundColor: theme.primaryColor,
       width: scaleHeight(60),
       height: scaleHeight(60),
       borderRadius: 30,
@@ -31,7 +33,7 @@ export const HomeScreenStyles = () =>
       elevation: 5,
     },
     floatingButtonText: {
-      color: '#FFF',
+      color: theme.backgroundColor,
       fontSize: scaledSize(30),
       fontWeight: 'bold',
     },

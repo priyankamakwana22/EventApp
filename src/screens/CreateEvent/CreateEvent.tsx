@@ -12,6 +12,7 @@ import {
 import DateTimePicker from '@react-native-community/datetimepicker';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {CreateEventStyles} from './CreateEvent.style';
+import {useTheme} from '../../utils/Theme/useTheme';
 
 const CreateEvent = () => {
   const [form, setForm] = useState({
@@ -23,8 +24,8 @@ const CreateEvent = () => {
     attendees: '',
     description: '',
   });
-
-  const styles = CreateEventStyles();
+  const {theme} = useTheme();
+  const styles = CreateEventStyles(theme);
 
   const handleChange = (key, value) => {
     setForm({...form, [key]: value});

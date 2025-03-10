@@ -1,6 +1,7 @@
 import {moderateScale, scaledSize, scaleHeight} from '../../utils';
+import {Theme} from '../../utils/Theme/themeTypes';
 
-export const CreateEventStyles = () => ({
+export const CreateEventStyles = (theme: Theme) => ({
   container: {flex: 1, padding: moderateScale(20)},
   label: {
     fontSize: scaledSize(16),
@@ -9,21 +10,21 @@ export const CreateEventStyles = () => ({
   },
   input: {
     borderWidth: 1,
-    borderColor: '#ccc',
-    padding: 10,
+    borderColor: theme.inputBorderColor,
+    padding: moderateScale(10),
     borderRadius: 5,
-    marginTop: 5,
+    marginTop: moderateScale(5),
   },
   imagePicker: {
-    padding: 10,
-    backgroundColor: '#ddd',
+    padding: moderateScale(10),
+    backgroundColor: theme.pickerBackgroundColor,
     borderRadius: 5,
     alignItems: 'center',
-    marginTop: 5,
+    marginTop: moderateScale(5),
   },
   imageScroll: {
     flexDirection: 'row',
-    marginTop: 10,
+    marginTop: moderateScale(10),
   },
   imageContainer: {
     position: 'relative',
@@ -36,9 +37,10 @@ export const CreateEventStyles = () => ({
   },
   removeImageButton: {
     position: 'absolute',
-    top: -8,
-    right: -8,
-    backgroundColor: 'red',
+    top: scaleHeight(-8),
+    right: scaleHeight(-8),
+    backgroundColor: '#00000080',
+    padding: moderateScale(5),
     width: scaleHeight(24),
     height: scaleHeight(24),
     borderRadius: 12,

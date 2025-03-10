@@ -11,9 +11,11 @@ import {
   getAuth,
   createUserWithEmailAndPassword,
 } from '@react-native-firebase/auth';
+import {useTheme} from '../../utils/Theme/useTheme';
 
 const SignUpScreen: React.FC = () => {
-  const styles = SignUpStyles();
+  const {theme} = useTheme();
+  const styles = SignUpStyles(theme);
   const [name, setName] = useState<string>('');
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');

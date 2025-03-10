@@ -1,29 +1,30 @@
 import {StyleSheet} from 'react-native';
 import {moderateScale, scaledSize} from '../../utils';
+import {Theme} from '../../utils/Theme/themeTypes';
 
-export const loginStyles = () =>
+export const loginStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
       justifyContent: 'center',
-      padding: 20,
-      backgroundColor: '#f5f5f5',
+      padding: moderateScale(20),
+      backgroundColor: theme.backgroundColor,
     },
     card: {
-      paddingHorizontal: 20,
-      paddingVertical: 50,
+      paddingHorizontal: moderateScale(20),
+      paddingVertical: moderateScale(50),
     },
     title: {
       textAlign: 'center',
-      marginBottom: 20,
+      marginBottom: moderateScale(20),
       fontWeight: 'bold',
     },
     forgotPasswordText: {
-      marginBottom: 10,
+      marginBottom: moderateScale(10),
       textAlign: 'right',
       fontWeight: 'bold',
-      color: 'blue',
+      color: theme.linkColor,
     },
-    errorText: {color: 'red', marginTop: scaledSize(10)},
+    errorText: {color: theme.errorColor, marginTop: scaledSize(10)},
     buttonStyle: {marginVertical: moderateScale(25)},
   });

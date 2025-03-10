@@ -1,5 +1,7 @@
 export const strings = {
   EMAIL: 'Email',
+  SYNC: 'Sync',
+  LOG_OUT: 'Logout',
   SIGN_UP: 'Sign Up',
   LOGIN: 'Login',
   NAME_OF_THE_EVENT: 'Name of the event:',

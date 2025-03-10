@@ -8,9 +8,11 @@ import {strings} from '../../utils/strings';
 import {forgotPasswordStyles} from './ForgotPassword.style';
 import {replace} from '../../navigation/NavigationService';
 import auth from '@react-native-firebase/auth';
+import {useTheme} from '../../utils/Theme/useTheme';
 
 const ForgotPassword = () => {
-  const styles = forgotPasswordStyles();
+  const {theme} = useTheme();
+  const styles = forgotPasswordStyles(theme);
   const [email, setEmail] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
 
