@@ -8,12 +8,14 @@ export const CreateEventStyles = (theme: Theme) => ({
     marginBottom: moderateScale(20),
   },
   header: {fontSize: scaledSize(20), fontWeight: 'bold'},
+  leftView: {alignSelf: 'flex-start'},
   label: {
     fontSize: scaledSize(16),
     fontWeight: 'bold',
     marginTop: scaledSize(16),
     marginBottom: scaledSize(6),
   },
+  input2: {height: 80, marginBottom: 80},
   input: {
     borderWidth: 1,
     borderColor: theme.inputBorderColor,
@@ -51,5 +53,38 @@ export const CreateEventStyles = (theme: Theme) => ({
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  dropdown: {
+    height: 50,
+    borderColor: 'gray',
+    borderWidth: 0.5,
+    borderRadius: 8,
+    paddingHorizontal: 8,
+  },
+  icon: {
+    marginRight: 5,
+  },
+  label2: {
+    // position: 'absolute',
+    backgroundColor: 'white',
+    left: 22,
+    top: 8,
+    zIndex: 999,
+    paddingHorizontal: 8,
+    fontSize: 14,
+  },
+  placeholderStyle: {
+    fontSize: 16,
+  },
+  selectedTextStyle: {
+    fontSize: 16,
+  },
+  iconStyle: {
+    width: 20,
+    height: 20,
+  },
+  inputSearchStyle: {
+    height: 40,
+    fontSize: 16,
   },
 });
