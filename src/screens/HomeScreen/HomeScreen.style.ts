@@ -9,7 +9,11 @@ export const HomeScreenStyles = (theme: Theme) =>
       flexDirection: 'row',
       gap: moderateScale(10),
     },
-    userNameText: {fontSize: scaledSize(20), fontWeight: 'bold'},
+    userNameText: {
+      marginHorizontal: 5,
+      fontSize: scaledSize(20),
+      fontWeight: 'bold',
+    },
     button: {
       paddingVertical: scaleHeight(6),
       paddingHorizontal: scaleWidth(12),
@@ -17,7 +21,7 @@ export const HomeScreenStyles = (theme: Theme) =>
       borderRadius: 6,
     },
     buttonText: {
-      color: theme.primaryColor,
+      color: theme.iconColor,
       fontWeight: 'bold',
     },
     floatingButton: {

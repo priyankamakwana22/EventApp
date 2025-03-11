@@ -13,6 +13,12 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {CreateEventStyles} from './CreateEvent.style';
 import {useTheme} from '../../utils/Theme/useTheme';
+import Icon from 'react-native-vector-icons/Entypo';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import Button from '../../component/Button/Button';
+import {strings} from '../../utils/strings';
+import Header from '../../component/Header/Header';
+import {goBack} from '../../navigation/NavigationService';
 
 const CreateEvent = () => {
   const [form, setForm] = useState({
@@ -24,6 +30,7 @@ const CreateEvent = () => {
     attendees: '',
     description: '',
   });
+  console.log('🚀 ~ CreateEvent ~ form:', form);
   const {theme} = useTheme();
   const styles = CreateEventStyles(theme);
 
@@ -35,7 +42,7 @@ const CreateEvent = () => {
     launchImageLibrary({mediaType: 'photo', selectionLimit: 0}, response => {
       if (response.assets && response.assets.length > 0) {
         const newImages = response.assets.map(asset => asset.uri);
-        handleChange('images', [...form.images, ...newImages]); // Add new images
+        handleChange('images', [...form.images, ...newImages]);
       }
     });
   };
@@ -54,8 +61,18 @@ const CreateEvent = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View>
+    <SafeAreaView style={[styles.container]}>
+      <Header
+        leftComponent={
+          <Pressable style={{alignSelf: 'flex-start'}} onPress={() => goBack()}>
+            <Ionicons size={18} color={theme.textColor} name="chevron-back" />
+          </Pressable>
+        }
+        bodyComponent={
+          <Text style={styles.header}>{strings.CREATE_EVENT}</Text>
+        }
+      />
+      <ScrollView>
         <Text style={styles.label}>Name:</Text>
         <TextInput
           style={styles.input}
@@ -77,7 +94,7 @@ const CreateEvent = () => {
         <DateTimePicker
           value={form.time}
           mode="time"
-          display="default"
+          // display="default"
           onChange={(event, selectedTime) => {
             if (selectedTime) handleChange('time', selectedTime);
           }}
@@ -103,7 +120,7 @@ const CreateEvent = () => {
               <Pressable
                 style={styles.removeImageButton}
                 onPress={() => removeImage(index)}>
-                <Text style={styles.removeImageText}>❌</Text>
+                <Icon size={18} color={theme.iconColor} name="cross" />
               </Pressable>
             </View>
           ))}
@@ -124,11 +141,8 @@ const CreateEvent = () => {
           onChangeText={text => handleChange('description', text)}
           multiline
         />
-
-        <Pressable onPress={handleSubmit} style={styles.button}>
-          <Text style={styles.buttonText}>Create Event</Text>
-        </Pressable>
-      </View>
+      </ScrollView>
+      <Button title={strings.CREATE_EVENT} onPress={handleSubmit} />
     </SafeAreaView>
   );
 };

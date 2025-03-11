@@ -8,6 +8,8 @@ export const dark: Theme = {
   linkColor: '#0000FF',
   inputBorderColor: '#ccc',
   pickerBackgroundColor: '#dddddd',
+  iconColor: '#FFFFFF',
+  transparentBackground: '#00000080',
 };
 
 export const light: Theme = {
@@ -18,6 +20,8 @@ export const light: Theme = {
   linkColor: '#0000FF',
   inputBorderColor: '#ccc',
   pickerBackgroundColor: '#dddddd',
+  iconColor: '#FFFFFF',
+  transparentBackground: '#00000080',
 };
 
 export const themes = {light, dark};

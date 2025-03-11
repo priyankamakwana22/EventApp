@@ -5,5 +5,7 @@ export type Theme = {
   errorColor: string;
   linkColor: string;
   inputBorderColor: string;
+  iconColor: string;
   pickerBackgroundColor: string;
+  transparentBackground: string;
 };

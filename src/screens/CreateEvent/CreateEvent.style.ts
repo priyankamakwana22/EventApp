@@ -2,11 +2,17 @@ import {moderateScale, scaledSize, scaleHeight} from '../../utils';
 import {Theme} from '../../utils/Theme/themeTypes';
 
 export const CreateEventStyles = (theme: Theme) => ({
-  container: {flex: 1, padding: moderateScale(20)},
+  container: {
+    flex: 1,
+    marginHorizontal: moderateScale(20),
+    marginBottom: moderateScale(20),
+  },
+  header: {fontSize: scaledSize(20), fontWeight: 'bold'},
   label: {
     fontSize: scaledSize(16),
     fontWeight: 'bold',
-    marginTop: scaledSize(10),
+    marginTop: scaledSize(16),
+    marginBottom: scaledSize(6),
   },
   input: {
     borderWidth: 1,
@@ -39,25 +45,11 @@ export const CreateEventStyles = (theme: Theme) => ({
     position: 'absolute',
     top: scaleHeight(-8),
     right: scaleHeight(-8),
-    backgroundColor: '#00000080',
-    padding: moderateScale(5),
+    backgroundColor: theme.transparentBackground,
     width: scaleHeight(24),
     height: scaleHeight(24),
     borderRadius: 12,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  removeImageText: {
-    color: '#fff',
-    fontSize: scaledSize(14),
-    fontWeight: 'bold',
-  },
-  button: {
-    backgroundColor: '#007AFF',
-    padding: 12,
-    borderRadius: 5,
-    alignItems: 'center',
-    marginTop: scaleHeight(20),
-  },
-  buttonText: {color: '#FFF', fontWeight: 'bold'},
 });

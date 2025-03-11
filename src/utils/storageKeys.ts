@@ -1,3 +1,4 @@
 export const StorageKeys = {
-  THEME: 'theme', // theme.ts
+  THEME: 'theme',
+  IS_LOGGED_IN: 'isLoggedIn',
 };

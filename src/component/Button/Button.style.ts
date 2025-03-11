@@ -13,11 +13,11 @@ export const buttonStyles = (theme: Theme) =>
       minWidth: scaleWidth(120),
     },
     contained: {
-      backgroundColor: theme.backgroundColor,
+      backgroundColor: theme.primaryColor,
     },
     outlined: {
       borderWidth: 1,
-      borderColor: theme.backgroundColor,
+      borderColor: theme.primaryColor,
       backgroundColor: 'transparent',
     },
     pressed: {

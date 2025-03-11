@@ -6,8 +6,6 @@ import {themes} from './theme';
 import {Theme} from './themeTypes';
 import {StorageKeys} from '../storageKeys';
 
-const STORAGE_KEY = 'theme';
-
 export const useTheme = () => {
   const systemColorScheme = useColorScheme();
   const [theme, setTheme] = useState<Theme>(

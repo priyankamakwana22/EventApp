@@ -9,6 +9,8 @@ import {strings} from '../../utils/strings';
 import {replace} from '../../navigation/NavigationService';
 import {getAuth, signInWithEmailAndPassword} from '@react-native-firebase/auth';
 import {useTheme} from '../../utils/Theme/useTheme';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import {StorageKeys} from '../../utils/storageKeys';
 
 const LoginScreen = () => {
   const [email, setEmail] = useState('');
@@ -30,6 +32,7 @@ const LoginScreen = () => {
       const auth = getAuth();
       await signInWithEmailAndPassword(auth, email, password);
       replace(route.HOME_SCREEN);
+      AsyncStorage.setItem(StorageKeys.IS_LOGGED_IN, 'true');
     } catch (error: any) {
       setErrorMessage(error.message);
     }
@@ -42,6 +45,7 @@ const LoginScreen = () => {
   const forgotPassword = () => {
     replace(route.FORGOT_PASSWORD);
   };
+
   return (
     <View style={styles.container}>
       <Card style={styles.card}>
@@ -49,7 +53,6 @@ const LoginScreen = () => {
           <Text variant="titleLarge" style={styles.title}>
             {strings.LOGIN}
           </Text>
-
           <Input
             label="Email"
             value={email}
@@ -81,7 +84,11 @@ const LoginScreen = () => {
             mode="contained"
           />
 
-          <Button title="Sign Up" onPress={handleSignUp} mode="outlined" />
+          <Button
+            title={strings.SIGN_UP}
+            onPress={handleSignUp}
+            mode="outlined"
+          />
         </Card.Content>
       </Card>
     </View>

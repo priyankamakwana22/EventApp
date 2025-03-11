@@ -6,7 +6,6 @@ export const headerStyles = () =>
     container: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      paddingHorizontal: moderateScale(20),
     },
     pressableView: {
       alignItems: 'center',
