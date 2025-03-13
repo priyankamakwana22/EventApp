@@ -67,6 +67,7 @@ const Navigation = () => {
               component={SignUpScreen}
             />
             <Stack.Screen name={route.HOME_SCREEN} component={HomeScreen} />
+            <Stack.Screen name={route.CREATE_EVENT} component={CreateEvent} />
             <Stack.Screen
               name={route.FORGOT_PASSWORD}
               component={ForgotPassword}

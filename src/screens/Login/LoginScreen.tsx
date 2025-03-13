@@ -6,7 +6,7 @@ import Button from '../../component/Button/Button';
 import Input from '../../component/Input/Input';
 import {route} from '../../navigation/constants';
 import {strings} from '../../utils/strings';
-import {replace} from '../../navigation/NavigationService';
+import {navigate, replace} from '../../navigation/NavigationService';
 import {getAuth, signInWithEmailAndPassword} from '@react-native-firebase/auth';
 import {useTheme} from '../../utils/Theme/useTheme';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -23,27 +23,36 @@ const LoginScreen = () => {
     if (email === '') {
       setErrorMessage('Please enter email');
       return;
-    }
-    if (password === '') {
+    } else if (password === '') {
       setErrorMessage('Please enter password');
       return;
-    }
-    try {
-      const auth = getAuth();
-      await signInWithEmailAndPassword(auth, email, password);
-      replace(route.HOME_SCREEN);
-      AsyncStorage.setItem(StorageKeys.IS_LOGGED_IN, 'true');
-    } catch (error: any) {
-      setErrorMessage(error.message);
+    } else {
+      try {
+        const auth = getAuth();
+        const userCredential = await signInWithEmailAndPassword(
+          auth,
+          email,
+          password,
+        );
+        const user = userCredential.user;
+
+        if (user.displayName) {
+          await AsyncStorage.setItem(StorageKeys.USER_NAME, user.displayName);
+        }
+        await AsyncStorage.setItem(StorageKeys.IS_LOGGED_IN, 'true');
+        navigate(route.HOME_SCREEN);
+      } catch (error: any) {
+        setErrorMessage(error.message);
+      }
     }
   };
 
   const handleSignUp = () => {
-    replace(route.SIGN_UP_SCREEN);
+    navigate(route.SIGN_UP_SCREEN);
   };
 
   const forgotPassword = () => {
-    replace(route.FORGOT_PASSWORD);
+    navigate(route.FORGOT_PASSWORD);
   };
 
   return (

@@ -10,6 +10,7 @@ export const HomeScreenStyles = (theme: Theme) =>
       gap: moderateScale(10),
     },
     userNameText: {
+      color: theme.textColor,
       marginHorizontal: 5,
       fontSize: scaledSize(20),
       fontWeight: 'bold',
@@ -17,7 +18,7 @@ export const HomeScreenStyles = (theme: Theme) =>
     button: {
       paddingVertical: scaleHeight(6),
       paddingHorizontal: scaleWidth(12),
-      backgroundColor: theme.primaryColor,
+      // backgroundColor: theme.primaryColor,
       borderRadius: 6,
     },
     buttonText: {

@@ -6,10 +6,11 @@ import Input from '../../component/Input/Input';
 import {SignUpStyles} from './SignUpScreen.style';
 import {route} from '../../navigation/constants';
 import {strings} from '../../utils/strings';
-import {replace} from '../../navigation/NavigationService';
+import {navigate} from '../../navigation/NavigationService';
 import {
   getAuth,
   createUserWithEmailAndPassword,
+  updateProfile,
 } from '@react-native-firebase/auth';
 import {useTheme} from '../../utils/Theme/useTheme';
 
@@ -23,32 +24,38 @@ const SignUpScreen: React.FC = () => {
   const [errorMessage, setErrorMessage] = useState<string>('');
 
   const handleLogin = () => {
-    replace(route.LOGIN);
+    navigate(route.LOGIN);
   };
 
   const handleSignUp = async () => {
     if (name === '') {
       setErrorMessage('Please enter name');
       return;
-    }
-    if (email === '') {
+    } else if (email === '') {
       setErrorMessage('Please enter email');
       return;
-    }
-    if (password === '') {
+    } else if (password === '') {
       setErrorMessage('Please enter password');
       return;
-    }
-    if (password !== confirmPassword) {
+    } else if (password !== confirmPassword) {
       setErrorMessage('Password and confirm password should be same');
       return;
-    }
-    try {
-      const auth = getAuth();
-      await createUserWithEmailAndPassword(auth, email, password);
-      replace(route.HOME_SCREEN);
-    } catch (error: any) {
-      setErrorMessage(error.message);
+    } else {
+      try {
+        const auth = getAuth();
+        const userCredential = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password,
+        );
+
+        // Set the display name
+        await updateProfile(userCredential.user, {displayName: name});
+
+        navigate(route.HOME_SCREEN);
+      } catch (error: any) {
+        setErrorMessage(error.message);
+      }
     }
   };
 
@@ -59,7 +66,6 @@ const SignUpScreen: React.FC = () => {
           <Text variant="titleLarge" style={styles.title}>
             {strings.SIGN_UP}
           </Text>
-
           <Input label="Name" value={name} onChangeText={setName} />
           <Input
             label={strings.EMAIL}

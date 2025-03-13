@@ -7,7 +7,31 @@ export const CreateEventStyles = (theme: Theme) => ({
     marginHorizontal: moderateScale(20),
     marginBottom: moderateScale(20),
   },
+  dateTimeContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 20,
+    marginTop: moderateScale(4),
+  },
+  dateView: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 5,
+    padding: 10,
+    backgroundColor: theme.primaryColor,
+    borderRadius: 10,
+  },
   header: {fontSize: scaledSize(20), fontWeight: 'bold'},
+  uploadText: {
+    fontSize: scaledSize(16),
+    fontWeight: '500',
+    color: theme.textColor,
+  },
+  dateText: {
+    fontSize: scaledSize(16),
+    fontWeight: '500',
+    color: theme.backgroundColor,
+  },
   leftView: {alignSelf: 'flex-start'},
   label: {
     fontSize: scaledSize(16),

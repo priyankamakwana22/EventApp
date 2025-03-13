@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useCallback, useMemo, useState} from 'react';
 import {
   View,
   Text,
@@ -10,7 +10,6 @@ import {
   ScrollView,
 } from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
-import DateTimePicker from '@react-native-community/datetimepicker';
 import {launchImageLibrary} from 'react-native-image-picker';
 import {CreateEventStyles} from './CreateEvent.style';
 import {useTheme} from '../../utils/Theme/useTheme';
@@ -21,6 +20,10 @@ import {strings} from '../../utils/strings';
 import Header from '../../component/Header/Header';
 import {goBack} from '../../navigation/NavigationService';
 import {cities, countries, states} from '../../utils/data';
+import DatePicker from 'react-native-date-picker';
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
+import Feather from 'react-native-vector-icons/Feather';
+import {useDispatch, useSelector} from 'react-redux';
 
 interface FormState {
   name: string;
@@ -46,28 +49,52 @@ const CreateEvent: React.FC = () => {
     attendees: '',
     description: '',
   });
-  console.log('🚀 ~ form:', form);
 
   const {theme} = useTheme();
   const styles = CreateEventStyles(theme);
+  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedTime, setSelectedTime] = useState(new Date());
+  const [openDate, setOpenDate] = useState(false);
+  const [openTime, setOpenTime] = useState(false);
 
   const handleChange = (key: keyof FormState, value: any) => {
     setForm(prevForm => ({...prevForm, [key]: value}));
   };
 
-  const handleCountryChange = (item: {value: string}) => {
-    handleChange('country', item.value);
+  const handleCountryChange = (item: {label: string}) => {
+    handleChange('country', item.label); // Store label instead of value
     handleChange('state', '');
     handleChange('city', '');
   };
 
+  const selectedCountry = useMemo(
+    () => countries.find(c => c.label === form.country),
+    [form.country],
+  );
+
+  const selectedState = useMemo(
+    () =>
+      selectedCountry
+        ? states[selectedCountry.value].find(s => s.label === form.state)
+        : null,
+    [selectedCountry, form.state],
+  );
+
+  const selectedCity = useMemo(
+    () =>
+      selectedState
+        ? cities[selectedState.value].find(c => c.label === form.city)
+        : null,
+    [selectedState, form.city],
+  );
+
   const handleStateChange = (item: {value: string}) => {
-    handleChange('state', item.value);
+    handleChange('state', item.label);
     handleChange('city', '');
   };
 
   const handleCityChange = (item: {value: string}) => {
-    handleChange('city', item.value);
+    handleChange('city', item.label);
   };
 
   const pickImages = () => {
@@ -118,64 +145,100 @@ const CreateEvent: React.FC = () => {
           value={form.name}
           onChangeText={text => handleChange('name', text)}
         />
+        <View style={styles.dateTimeContainer}>
+          <View>
+            <Text style={styles.label}>{strings.DATE}</Text>
+            <Pressable
+              style={styles.dateView}
+              onPress={() => setOpenDate(true)}>
+              <Text style={styles.dateText}>
+                {selectedDate.toISOString().split('T')[0]}
+              </Text>
+              <MaterialIcons
+                name="keyboard-arrow-down"
+                size={25}
+                color={theme.iconColor}
+              />
+            </Pressable>
+            <DatePicker
+              modal
+              open={openDate}
+              date={selectedDate}
+              mode="date"
+              onConfirm={date => {
+                setOpenDate(false);
+                setSelectedDate(date);
+                handleChange('date', date.toISOString().split('T')[0]);
+              }}
+              onCancel={() => setOpenDate(false)}
+            />
+          </View>
+          <View>
+            <Text style={styles.label}>{strings.TIME}</Text>
+            <Pressable
+              style={styles.dateView}
+              onPress={() => setOpenTime(true)}>
+              <Text style={styles.dateText}>
+                {selectedTime.toLocaleTimeString([], {
+                  hour: '2-digit',
+                  minute: '2-digit',
+                })}
+              </Text>
+              <Feather name="clock" size={25} color={theme.iconColor} />
+            </Pressable>
+            <DatePicker
+              modal
+              open={openTime}
+              date={selectedTime}
+              mode="time"
+              onConfirm={selectedTime => {
+                setOpenTime(false);
+                setSelectedTime(selectedTime);
+                handleChange('time', selectedTime.toLocaleTimeString());
+              }}
+              onCancel={() => setOpenTime(false)}
+            />
+          </View>
+        </View>
 
-        <Text style={styles.label}>{strings.DATE}</Text>
-        <DateTimePicker
-          value={form.date}
-          mode="date"
-          display="default"
-          onChange={(event, selectedDate) =>
-            selectedDate && handleChange('date', selectedDate)
-          }
-        />
-
-        <Text style={styles.label}>{strings.TIME}</Text>
-        <DateTimePicker
-          value={form.time}
-          mode="time"
-          onChange={(event, selectedTime) =>
-            selectedTime && handleChange('time', selectedTime)
-          }
-        />
-
-        <Text style={styles.label}>{strings.SELECT_COUNTRY}</Text>
+        <Text style={styles.label}>{strings.COUNTRY}</Text>
         <Dropdown
           style={styles.dropdown}
           data={countries}
           labelField="label"
-          valueField="value"
-          placeholder="Select Country"
-          value={form.country}
+          valueField="label"
+          placeholder={strings.SELECT_COUNTRY}
+          value={selectedCountry?.label || null}
           onChange={handleCountryChange}
         />
 
-        <Text style={styles.label}>{strings.SELECT_STATE}</Text>
+        <Text style={styles.label}>{strings.STATE}</Text>
         <Dropdown
           style={styles.dropdown}
-          data={form.country ? states[form.country] : []}
+          data={selectedCountry ? states[selectedCountry.value] : []}
           labelField="label"
-          valueField="value"
-          placeholder="Select State"
-          value={form.state}
+          valueField="label"
+          placeholder={strings.SELECT_STATE}
+          value={selectedState?.label || null}
           onChange={handleStateChange}
-          disabled={!form.country}
+          disabled={!selectedCountry}
         />
 
-        <Text style={styles.label}>{strings.SELECT_CITY}</Text>
+        <Text style={styles.label}>{strings.CITY}</Text>
+
         <Dropdown
           style={styles.dropdown}
-          data={form.state ? cities[form.state] : []}
+          data={selectedState ? cities[selectedState.value] : []}
           labelField="label"
-          valueField="value"
-          placeholder="Select City"
-          value={form.city}
+          valueField="label"
+          placeholder={strings.SELECT_CITY}
+          value={selectedCity?.label || null}
           onChange={handleCityChange}
-          disabled={!form.state}
+          disabled={!selectedCity}
         />
-
-        <Text style={styles.label}>{strings.SELECT_IMAGES}</Text>
+        <Text style={styles.label}>{strings.IMAGES}</Text>
         <Pressable onPress={pickImages} style={styles.imagePicker}>
-          <Text>{strings.UPLOAD_IMAGES}</Text>
+          <Text style={styles.uploadText}>{strings.UPLOAD_IMAGES}</Text>
         </Pressable>
 
         <ScrollView horizontal style={styles.imageScroll}>
