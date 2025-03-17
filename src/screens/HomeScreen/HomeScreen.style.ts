@@ -4,7 +4,76 @@ import {Theme} from '../../utils/Theme/themeTypes';
 
 export const HomeScreenStyles = (theme: Theme) =>
   StyleSheet.create({
-    container: {flex: 1},
+    container: {
+      flex: 1,
+      backgroundColor: theme.backgroundColor,
+    },
+    listContainer: {
+      paddingHorizontal: 16,
+      paddingBottom: 80,
+    },
+    card: {
+      backgroundColor: 'white',
+      padding: 12,
+      borderRadius: 10,
+      marginVertical: 8,
+      shadowColor: '#000',
+      shadowOpacity: 0.1,
+      shadowRadius: 4,
+      elevation: 3,
+    },
+    imageContainer: {
+      position: 'relative',
+    },
+    eventImage: {
+      width: '100%',
+      height: 150,
+      borderRadius: 10,
+    },
+    moreImagesBadge: {
+      position: 'absolute',
+      bottom: 8,
+      right: 8,
+      backgroundColor: 'rgba(0, 0, 0, 0.6)',
+      paddingHorizontal: 8,
+      paddingVertical: 4,
+      borderRadius: 5,
+    },
+    moreImagesText: {
+      color: 'white',
+      fontSize: 12,
+      fontWeight: 'bold',
+    },
+    eventDetails: {
+      paddingTop: 8,
+    },
+    eventName: {
+      fontSize: 18,
+      fontWeight: 'bold',
+      color: theme.textColor,
+    },
+    eventText: {
+      fontSize: 14,
+      color: 'gray',
+      marginTop: 2,
+    },
+    floatingButton: {
+      position: 'absolute',
+      bottom: 20,
+      right: 20,
+      backgroundColor: theme.primaryColor,
+      width: 50,
+      height: 50,
+      borderRadius: 25,
+      justifyContent: 'center',
+      alignItems: 'center',
+      shadowColor: '#000',
+      shadowOpacity: 0.2,
+      shadowRadius: 4,
+      elevation: 5,
+    },
+
+    // container: {flex: 1},
     headerRight: {
       flexDirection: 'row',
     },
@@ -23,18 +92,6 @@ export const HomeScreenStyles = (theme: Theme) =>
     buttonText: {
       color: theme.iconColor,
       fontWeight: 'bold',
-    },
-    floatingButton: {
-      position: 'absolute',
-      bottom: scaleHeight(30),
-      right: scaleHeight(20),
-      backgroundColor: theme.primaryColor,
-      width: scaleHeight(60),
-      height: scaleHeight(60),
-      borderRadius: 30,
-      alignItems: 'center',
-      justifyContent: 'center',
-      elevation: 5,
     },
     floatingButtonText: {
       color: theme.backgroundColor,
