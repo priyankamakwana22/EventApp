@@ -19,14 +19,16 @@ import Icons from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {StorageKeys} from '../../utils/storageKeys';
 import Entypo from 'react-native-vector-icons/Entypo';
-import {useSelector} from 'react-redux';
+import {useDispatch, useSelector} from 'react-redux';
+import {deleteEvent} from '../../redux/slices/eventSlice';
+import {strings} from '../../utils/strings';
 
 const HomeScreen = () => {
   const {theme} = useTheme();
   const styles = HomeScreenStyles(theme);
   const [username, setUsername] = useState<string | null>(null);
   const events = useSelector(state => state.event);
-
+  const dispatch = useDispatch();
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, user => {
@@ -67,7 +69,10 @@ const HomeScreen = () => {
     (a, b) => new Date(b.date) - new Date(a.date),
   );
 
-  // Render Event Card
+  const handleDeleteEvent = eventId => {
+    dispatch(deleteEvent(eventId)); // Make sure this updates Redux
+  };
+
   const renderEventCard = ({item}) => {
     const moreImagesCount = item.images.length - 1;
 
@@ -97,9 +102,18 @@ const HomeScreen = () => {
           <Text style={styles.eventText}>
             Date: {item.date} | Time: {item.time}
           </Text>
-          <Text style={styles.eventText}>Attendees: {item.attendees}</Text>
+          <Text style={styles.eventText}>
+            {strings.NUMBER_OF_ATTENDEES} {item.attendees}
+          </Text>
           <Text style={styles.eventText}>Description: {item.description}</Text>
         </View>
+
+        {/* Delete Button */}
+        <Pressable
+          style={styles.deleteButton}
+          onPress={() => handleDeleteEvent(item.id)}>
+          <Icons name="delete" size={20} color="red" />
+        </Pressable>
       </View>
     );
   };

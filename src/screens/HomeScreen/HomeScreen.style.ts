@@ -98,4 +98,16 @@ export const HomeScreenStyles = (theme: Theme) =>
       fontSize: scaledSize(30),
       fontWeight: 'bold',
     },
+    deleteButton: {
+      position: 'absolute',
+      bottom: 10,
+      right: 10,
+      backgroundColor: 'rgba(255, 0, 0, 0.1)',
+      padding: 6,
+      alignItems: 'center',
+      justifyContent: 'center',
+      height: scaleHeight(50),
+      width: scaleHeight(50),
+      borderRadius: scaleHeight(25),
+    },
   });

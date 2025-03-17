@@ -18,13 +18,14 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import Button from '../../component/Button/Button';
 import {strings} from '../../utils/strings';
 import Header from '../../component/Header/Header';
-import {goBack} from '../../navigation/NavigationService';
+import {goBack, navigate} from '../../navigation/NavigationService';
 import {cities, countries, states} from '../../utils/data';
 import DatePicker from 'react-native-date-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
 import {useDispatch} from 'react-redux';
 import {addEvent, setFormData} from '../../redux/slices/eventSlice';
+import {route} from '../../navigation/constants';
 
 interface FormState {
   name: string;
@@ -128,7 +129,8 @@ const CreateEvent: React.FC = () => {
     }
 
     dispatch(addEvent(form));
-    Alert.alert('Success', 'Event created successfully!');
+    navigate(route.HOME_SCREEN);
+    // Alert.alert('Success', 'Event created successfully!');
   };
 
   return (
