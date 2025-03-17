@@ -48,9 +48,7 @@ const SignUpScreen: React.FC = () => {
           email,
           password,
         );
-
-        // Set the display name
-        await updateProfile(userCredential.user, {displayName: name});
+        await userCredential.user.updateProfile({displayName: name});
 
         navigate(route.HOME_SCREEN);
       } catch (error: any) {

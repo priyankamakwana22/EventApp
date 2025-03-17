@@ -7,7 +7,6 @@ export const HomeScreenStyles = (theme: Theme) =>
     container: {flex: 1},
     headerRight: {
       flexDirection: 'row',
-      gap: moderateScale(10),
     },
     userNameText: {
       color: theme.textColor,

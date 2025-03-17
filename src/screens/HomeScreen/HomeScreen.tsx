@@ -1,25 +1,40 @@
-import React from 'react';
+import React, {useEffect, useState} from 'react';
 import {Text, View, Pressable, SafeAreaView, Alert} from 'react-native';
-import {HomeScreenStyles} from './HomeScreen.style';
-import Header from '../../component/Header/Header';
+import {getAuth, onAuthStateChanged} from '@react-native-firebase/auth';
 import {navigate} from '../../navigation/NavigationService';
 import {route} from '../../navigation/constants';
 import {useTheme} from '../../utils/Theme/useTheme';
-import {strings} from '../../utils/strings';
 import Icon from 'react-native-vector-icons/Entypo';
+import Header from '../../component/Header/Header';
+import {HomeScreenStyles} from './HomeScreen.style';
+import Icons from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {StorageKeys} from '../../utils/storageKeys';
 
 const HomeScreen = () => {
   const {theme} = useTheme();
   const styles = HomeScreenStyles(theme);
+  const [username, setUsername] = useState<string | null>(null);
+
+  useEffect(() => {
+    const auth = getAuth();
+
+    const unsubscribe = onAuthStateChanged(auth, user => {
+      if (user) {
+        setUsername(user.displayName || 'Guest');
+      } else {
+        setUsername(null);
+      }
+    });
+
+    return () => unsubscribe();
+  }, []);
 
   const onPressSync = () => {
     console.log('Sync events');
   };
 
   const onPressLogout = () => {
-    console.log('Logout');
     Alert.alert('Logout', 'Are you sure you want to logout?', [
       {
         text: 'Cancel',
@@ -27,9 +42,11 @@ const HomeScreen = () => {
       },
       {
         text: 'Yes',
-        onPress: () => {
+        onPress: async () => {
+          const auth = getAuth();
+          await auth.signOut();
+          await AsyncStorage.setItem(StorageKeys.IS_LOGGED_IN, 'false');
           navigate(route.LOGIN);
-          AsyncStorage.setItem(StorageKeys.IS_LOGGED_IN, 'false');
         },
       },
     ]);
@@ -42,19 +59,20 @@ const HomeScreen = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Header
-        leftComponent={<Text style={styles.userNameText}>{'Username'}</Text>}
+        leftComponent={
+          <Text style={styles.userNameText}>{username || 'Guest'}</Text>
+        }
         rightComponent={
           <View style={styles.headerRight}>
             <Pressable onPress={onPressSync} style={styles.button}>
-              <Text style={styles.buttonText}>{strings.SYNC}</Text>
+              <Icons name="sync" size={24} color={theme.primaryColor} />
             </Pressable>
             <Pressable onPress={onPressLogout} style={styles.button}>
-              <Text style={styles.buttonText}>{strings.LOG_OUT}</Text>
+              <Icons name="logout" size={24} color={theme.primaryColor} />
             </Pressable>
           </View>
         }
       />
-
       <Pressable style={styles.floatingButton} onPress={onPressAddEvent}>
         <Icon size={24} color={theme.iconColor} name="plus" />
       </Pressable>

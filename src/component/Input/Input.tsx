@@ -2,6 +2,7 @@ import React from 'react';
 import {TextInput} from 'react-native-paper';
 import {StyleProp, ViewStyle} from 'react-native';
 import {inputStyles} from './Input.style';
+import {useTheme} from '../../utils/Theme/useTheme';
 
 interface InputProps {
   label: string;
@@ -21,11 +22,13 @@ const Input: React.FC<InputProps> = ({
   style,
 }) => {
   const styles = inputStyles();
+  const {theme} = useTheme();
 
   return (
     <TextInput
       label={label}
       value={value}
+      placeholderTextColor={theme.textColor}
       onChangeText={onChangeText}
       secureTextEntry={secureTextEntry}
       keyboardType={keyboardType}

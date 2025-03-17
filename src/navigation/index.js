@@ -58,6 +58,10 @@ const Navigation = () => {
             <Stack.Screen name={route.HOME_SCREEN} component={HomeScreen} />
             <Stack.Screen name={route.CREATE_EVENT} component={CreateEvent} />
             <Stack.Screen name={route.LOGIN} component={LoginScreen} />
+            <Stack.Screen
+              name={route.SIGN_UP_SCREEN}
+              component={SignUpScreen}
+            />
           </>
         ) : (
           <>
