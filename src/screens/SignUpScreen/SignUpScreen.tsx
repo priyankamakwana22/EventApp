@@ -10,7 +10,6 @@ import {navigate} from '../../navigation/NavigationService';
 import {
   getAuth,
   createUserWithEmailAndPassword,
-  updateProfile,
 } from '@react-native-firebase/auth';
 import {useTheme} from '../../utils/Theme/useTheme';
 

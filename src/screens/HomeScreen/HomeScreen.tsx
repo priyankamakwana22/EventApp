@@ -10,11 +10,14 @@ import {HomeScreenStyles} from './HomeScreen.style';
 import Icons from 'react-native-vector-icons/MaterialIcons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import {StorageKeys} from '../../utils/storageKeys';
+import Entypo from 'react-native-vector-icons/Entypo';
+import {useSelector} from 'react-redux';
 
 const HomeScreen = () => {
   const {theme} = useTheme();
   const styles = HomeScreenStyles(theme);
   const [username, setUsername] = useState<string | null>(null);
+  const events = useSelector(state => state.event);
 
   useEffect(() => {
     const auth = getAuth();
@@ -64,8 +67,11 @@ const HomeScreen = () => {
         }
         rightComponent={
           <View style={styles.headerRight}>
-            <Pressable onPress={onPressSync} style={styles.button}>
+            <Pressable
+              onPress={onPressSync}
+              style={[styles.button, {flexDirection: 'row'}]}>
               <Icons name="sync" size={24} color={theme.primaryColor} />
+              <Entypo name="dot-single" size={24} color={theme.primaryColor} />
             </Pressable>
             <Pressable onPress={onPressLogout} style={styles.button}>
               <Icons name="logout" size={24} color={theme.primaryColor} />

@@ -23,7 +23,8 @@ import {cities, countries, states} from '../../utils/data';
 import DatePicker from 'react-native-date-picker';
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons';
 import Feather from 'react-native-vector-icons/Feather';
-import {useDispatch, useSelector} from 'react-redux';
+import {useDispatch} from 'react-redux';
+import {addEvent, setFormData} from '../../redux/slices/eventSlice';
 
 interface FormState {
   name: string;
@@ -50,6 +51,8 @@ const CreateEvent: React.FC = () => {
     description: '',
   });
 
+  const dispatch = useDispatch();
+
   const {theme} = useTheme();
   const styles = CreateEventStyles(theme);
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -62,7 +65,7 @@ const CreateEvent: React.FC = () => {
   };
 
   const handleCountryChange = (item: {label: string}) => {
-    handleChange('country', item.label); // Store label instead of value
+    handleChange('country', item.label);
     handleChange('state', '');
     handleChange('city', '');
   };
@@ -123,6 +126,8 @@ const CreateEvent: React.FC = () => {
       Alert.alert('Error', 'Please fill all fields');
       return;
     }
+
+    dispatch(addEvent(form));
     Alert.alert('Success', 'Event created successfully!');
   };
 
