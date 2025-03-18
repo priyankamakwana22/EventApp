@@ -130,7 +130,6 @@ const CreateEvent: React.FC = () => {
 
     dispatch(addEvent(form));
     navigate(route.HOME_SCREEN);
-    // Alert.alert('Success', 'Event created successfully!');
   };
 
   return (

@@ -22,6 +22,7 @@ import Entypo from 'react-native-vector-icons/Entypo';
 import {useDispatch, useSelector} from 'react-redux';
 import {deleteEvent} from '../../redux/slices/eventSlice';
 import {strings} from '../../utils/strings';
+import firestore from '@react-native-firebase/firestore';
 
 const HomeScreen = () => {
   const {theme} = useTheme();
@@ -29,20 +30,80 @@ const HomeScreen = () => {
   const [username, setUsername] = useState<string | null>(null);
   const events = useSelector(state => state.event);
   const dispatch = useDispatch();
+  const [hasUnsyncedEvents, setHasUnsyncedEvents] = useState(false);
+
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, user => {
-      if (user) {
-        setUsername(user.displayName || 'Guest');
-      } else {
-        setUsername(null);
-      }
+      setUsername(user ? user.displayName || 'Guest' : null);
     });
-    return () => unsubscribe();
+    return unsubscribe;
   }, []);
 
-  const onPressSync = () => {
-    console.log('Sync events');
+  useEffect(() => {
+    checkUnsyncedEvents();
+  }, [events]);
+
+  const checkUnsyncedEvents = async () => {
+    try {
+      const snapshot = await firestore().collection('events').get();
+      const firestoreEvents = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+      }));
+
+      // Check if there are any new events that are not in Firestore
+      const unsynced = events.some(
+        event => !firestoreEvents.some(fEvent => fEvent.id === event.id),
+      );
+
+      setHasUnsyncedEvents(unsynced);
+    } catch (error) {
+      console.error('Error checking unsynced events:', error);
+    }
+  };
+
+  const onPressSync = async () => {
+    if (!events || events.length === 0) {
+      Alert.alert('Sync', 'No events to sync.');
+      return;
+    }
+
+    try {
+      await saveEventsToFirestore();
+      Alert.alert('Sync', 'All events have been synced successfully!');
+      setHasUnsyncedEvents(false);
+    } catch (error) {
+      console.error('Error syncing events:', error);
+      Alert.alert('Sync Failed', 'Could not sync events.');
+    }
+  };
+
+  const saveEventsToFirestore = async () => {
+    try {
+      const eventsRef = firestore().collection('events');
+
+      for (const event of events) {
+        if (!event.id) {
+          console.warn('Skipping event without ID:', event);
+          continue;
+        }
+
+        await eventsRef.doc(event.id).set({
+          name: event.name,
+          city: event.city,
+          state: event.state,
+          country: event.country,
+          date: event.date,
+          time: event.time,
+          attendees: event.attendees,
+          description: event.description,
+          images: event.images || [],
+        });
+      }
+    } catch (error) {
+      console.error('Error saving events:', error);
+    }
   };
 
   const onPressLogout = () => {
@@ -64,26 +125,19 @@ const HomeScreen = () => {
     navigate(route.CREATE_EVENT);
   };
 
-  // Sort events by date (latest first)
-  const sortedEvents = [...events].sort(
-    (a, b) => new Date(b.date) - new Date(a.date),
-  );
-
   const handleDeleteEvent = eventId => {
-    dispatch(deleteEvent(eventId)); // Make sure this updates Redux
+    dispatch(deleteEvent(eventId));
+    setHasUnsyncedEvents(true);
   };
 
   const renderEventCard = ({item}) => {
-    const moreImagesCount = item.images.length - 1;
+    const moreImagesCount = item.images?.length - 1;
 
     return (
       <View style={styles.card}>
-        {/* Show First Image */}
-        {item.images.length > 0 && (
+        {item.images?.length > 0 && (
           <View style={styles.imageContainer}>
             <Image source={{uri: item.images[0]}} style={styles.eventImage} />
-
-            {/* Show "+X more" if there are more images */}
             {moreImagesCount > 0 && (
               <View style={styles.moreImagesBadge}>
                 <Text style={styles.moreImagesText}>
@@ -108,7 +162,6 @@ const HomeScreen = () => {
           <Text style={styles.eventText}>Description: {item.description}</Text>
         </View>
 
-        {/* Delete Button */}
         <Pressable
           style={styles.deleteButton}
           onPress={() => handleDeleteEvent(item.id)}>
@@ -130,7 +183,13 @@ const HomeScreen = () => {
               onPress={onPressSync}
               style={[styles.button, {flexDirection: 'row'}]}>
               <Icons name="sync" size={24} color={theme.primaryColor} />
-              <Entypo name="dot-single" size={24} color={theme.primaryColor} />
+              {hasUnsyncedEvents && (
+                <Entypo
+                  name="dot-single"
+                  size={24}
+                  color={theme.primaryColor}
+                />
+              )}
             </Pressable>
             <Pressable onPress={onPressLogout} style={styles.button}>
               <Icons name="logout" size={24} color={theme.primaryColor} />
@@ -139,15 +198,13 @@ const HomeScreen = () => {
         }
       />
 
-      {/* Event List */}
       <FlatList
-        data={sortedEvents}
+        data={[...events].reverse()}
         keyExtractor={(item, index) => index.toString()}
         renderItem={renderEventCard}
         contentContainerStyle={styles.listContainer}
       />
 
-      {/* Add Event Button */}
       <Pressable style={styles.floatingButton} onPress={onPressAddEvent}>
         <Icon size={24} color={theme.iconColor} name="plus" />
       </Pressable>
