@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useMemo, useCallback} from 'react';
 import {
   Text,
   View,
@@ -27,93 +27,95 @@ import firestore from '@react-native-firebase/firestore';
 const HomeScreen = () => {
   const {theme} = useTheme();
   const styles = HomeScreenStyles(theme);
-  const [username, setUsername] = useState<string | null>(null);
-  const events = useSelector(state => state.event);
+  const [username, setUsername] = useState(null);
+  const [userId, setUserId] = useState(null);
   const dispatch = useDispatch();
   const [hasUnsyncedEvents, setHasUnsyncedEvents] = useState(false);
 
   useEffect(() => {
     const auth = getAuth();
     const unsubscribe = onAuthStateChanged(auth, user => {
-      setUsername(user ? user.displayName || 'Guest' : null);
+      if (user?.uid !== userId) {
+        setUserId(user?.uid || null);
+        setUsername(user ? user.displayName || 'Guest' : null);
+      }
     });
     return unsubscribe;
-  }, []);
+  }, [userId]);
 
-  useEffect(() => {
-    checkUnsyncedEvents();
-  }, [events]);
+  // ✅ Fix: Ensure events exist to avoid state errors
+  const events = useSelector(state => state.event?.[userId] ?? []);
 
-  const checkUnsyncedEvents = async () => {
-    try {
-      const snapshot = await firestore().collection('events').get();
-      const firestoreEvents = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-      }));
+  const eventList = useMemo(() => events, [events]);
 
-      // Check if there are any new events that are not in Firestore
-      const unsynced = events.some(
-        event => !firestoreEvents.some(fEvent => fEvent.id === event.id),
-      );
-
-      setHasUnsyncedEvents(unsynced);
-    } catch (error) {
-      console.error('Error checking unsynced events:', error);
-    }
-  };
-
-  const onPressSync = async () => {
-    if (!events || events.length === 0) {
-      Alert.alert('Sync', 'No events to sync.');
+  const checkUnsyncedEvents = useCallback(async () => {
+    if (!userId || eventList.length === 0) {
+      setHasUnsyncedEvents(false);
       return;
     }
 
     try {
-      await saveEventsToFirestore();
-      Alert.alert('Sync', 'All events have been synced successfully!');
-      setHasUnsyncedEvents(false);
+      const snapshot = await firestore()
+        .collection('users')
+        .doc(userId)
+        .collection('events')
+        .get();
+
+      const firestoreEvents = snapshot.docs.map(doc => doc.id);
+      const unsynced = eventList.some(
+        event => !firestoreEvents.includes(event.id),
+      );
+
+      setHasUnsyncedEvents(prev => (prev !== unsynced ? unsynced : prev));
     } catch (error) {
-      console.error('Error syncing events:', error);
-      Alert.alert('Sync Failed', 'Could not sync events.');
+      console.error('Error checking unsynced events:', error);
+      setHasUnsyncedEvents(false);
     }
-  };
+  }, [userId]);
+
+  useEffect(() => {
+    checkUnsyncedEvents();
+  }, []);
 
   const saveEventsToFirestore = async () => {
+    if (!userId) return;
+
     try {
-      const eventsRef = firestore().collection('events');
+      const userEventsRef = firestore()
+        .collection('users')
+        .doc(userId)
+        .collection('events');
 
-      for (const event of events) {
-        if (!event.id) {
-          console.warn('Skipping event without ID:', event);
-          continue;
-        }
-
-        await eventsRef.doc(event.id).set({
-          name: event.name,
-          city: event.city,
-          state: event.state,
-          country: event.country,
-          date: event.date,
-          time: event.time,
-          attendees: event.attendees,
-          description: event.description,
-          images: event.images || [],
-        });
+      for (const event of eventList) {
+        if (!event.id) continue;
+        await userEventsRef.doc(event.id).set(event);
       }
     } catch (error) {
       console.error('Error saving events:', error);
     }
   };
 
-  const onPressLogout = () => {
+  const onPressSync = async () => {
+    if (eventList.length === 0) {
+      Alert.alert('Sync', 'No events to sync.');
+      return;
+    }
+    try {
+      await saveEventsToFirestore();
+      Alert.alert('Sync', 'All events have been synced successfully!');
+      setHasUnsyncedEvents(false);
+    } catch (error) {
+      Alert.alert('Sync Failed', 'Could not sync events.');
+    }
+  };
+
+  const onPressLogout = async () => {
     Alert.alert('Logout', 'Are you sure you want to logout?', [
       {text: 'Cancel', style: 'cancel'},
       {
         text: 'Yes',
         onPress: async () => {
-          const auth = getAuth();
-          await auth.signOut();
+          await getAuth().signOut();
           await AsyncStorage.setItem(StorageKeys.IS_LOGGED_IN, 'false');
           navigate(route.LOGIN);
         },
@@ -121,33 +123,26 @@ const HomeScreen = () => {
     ]);
   };
 
-  const onPressAddEvent = () => {
-    navigate(route.CREATE_EVENT);
-  };
-
   const handleDeleteEvent = eventId => {
     dispatch(deleteEvent(eventId));
     setHasUnsyncedEvents(true);
   };
 
-  const renderEventCard = ({item}) => {
-    const moreImagesCount = item.images?.length - 1;
-
-    return (
+  const renderEventCard = useCallback(
+    ({item}) => (
       <View style={styles.card}>
         {item.images?.length > 0 && (
           <View style={styles.imageContainer}>
             <Image source={{uri: item.images[0]}} style={styles.eventImage} />
-            {moreImagesCount > 0 && (
+            {item.images.length > 1 && (
               <View style={styles.moreImagesBadge}>
                 <Text style={styles.moreImagesText}>
-                  +{moreImagesCount} more
+                  +{item.images.length - 1} more
                 </Text>
               </View>
             )}
           </View>
         )}
-
         <View style={styles.eventDetails}>
           <Text style={styles.eventName}>{item.name}</Text>
           <Text style={styles.eventText}>
@@ -161,15 +156,15 @@ const HomeScreen = () => {
           </Text>
           <Text style={styles.eventText}>Description: {item.description}</Text>
         </View>
-
         <Pressable
           style={styles.deleteButton}
           onPress={() => handleDeleteEvent(item.id)}>
           <Icons name="delete" size={20} color="red" />
         </Pressable>
       </View>
-    );
-  };
+    ),
+    [eventList],
+  );
 
   return (
     <SafeAreaView style={styles.container}>
@@ -197,15 +192,15 @@ const HomeScreen = () => {
           </View>
         }
       />
-
       <FlatList
-        data={[...events].reverse()}
-        keyExtractor={(item, index) => index.toString()}
+        data={eventList}
+        keyExtractor={item => item.id}
         renderItem={renderEventCard}
         contentContainerStyle={styles.listContainer}
       />
-
-      <Pressable style={styles.floatingButton} onPress={onPressAddEvent}>
+      <Pressable
+        style={styles.floatingButton}
+        onPress={() => navigate(route.CREATE_EVENT)}>
         <Icon size={24} color={theme.iconColor} name="plus" />
       </Pressable>
     </SafeAreaView>

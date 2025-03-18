@@ -1,4 +1,4 @@
-import React, {useCallback, useMemo, useState} from 'react';
+import React, {useCallback, useEffect, useMemo, useState} from 'react';
 import {
   View,
   Text,
@@ -26,6 +26,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import {useDispatch} from 'react-redux';
 import {addEvent, setFormData} from '../../redux/slices/eventSlice';
 import {route} from '../../navigation/constants';
+import {getAuth, onAuthStateChanged} from '@react-native-firebase/auth';
 
 interface FormState {
   name: string;
@@ -61,9 +62,19 @@ const CreateEvent: React.FC = () => {
   const [openDate, setOpenDate] = useState(false);
   const [openTime, setOpenTime] = useState(false);
 
+  const [userId, setUserId] = useState<string | null>(null);
+  console.log('🚀 ~ HomeScreen ~ userId:', userId);
   const handleChange = (key: keyof FormState, value: any) => {
     setForm(prevForm => ({...prevForm, [key]: value}));
   };
+
+  useEffect(() => {
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, user => {
+      setUserId(user ? user.uid : null);
+    });
+    return unsubscribe;
+  }, []);
 
   const handleCountryChange = (item: {label: string}) => {
     handleChange('country', item.label);
@@ -115,20 +126,52 @@ const CreateEvent: React.FC = () => {
     handleChange('images', updatedImages);
   };
 
+  const validateEventData = event => {
+    const nameRegex = /^[a-zA-Z0-9 ]+$/; // Only allows letters, numbers, and spaces
+    const numberRegex = /^[0-9]+$/; // Only allows numbers
+    const currentDate = new Date(); // Get current date & time
+
+    if (!nameRegex.test(event.name)) {
+      Alert.alert('Invalid Name', 'Event name should not contain symbols.');
+      return false;
+    }
+
+    if (!nameRegex.test(event.description)) {
+      Alert.alert(
+        'Invalid Description',
+        'Event description should not contain symbols.',
+      );
+      return false;
+    }
+
+    const eventDateTime = new Date(event.date + 'T' + event.time);
+    if (eventDateTime <= currentDate) {
+      Alert.alert('Invalid Date/Time', 'Event cannot be in the past.');
+      return false;
+    }
+
+    if (!numberRegex.test(event.attendees)) {
+      Alert.alert(
+        'Invalid Attendees',
+        'Number of attendees should be a valid number.',
+      );
+      return false;
+    }
+
+    return true;
+  };
+
   const handleSubmit = () => {
-    if (
-      !form.name ||
-      !form.country ||
-      !form.state ||
-      !form.city ||
-      !form.attendees ||
-      !form.description
-    ) {
-      Alert.alert('Error', 'Please fill all fields');
+    if (!userId) {
+      Alert.alert('Error', 'User not identified.');
       return;
     }
 
-    dispatch(addEvent(form));
+    if (!validateEventData(form)) {
+      return;
+    }
+
+    dispatch(addEvent({...form, userId}));
     navigate(route.HOME_SCREEN);
   };
 

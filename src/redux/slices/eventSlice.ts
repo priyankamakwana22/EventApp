@@ -11,9 +11,14 @@ interface FormState {
   images: string[];
   attendees: string;
   description: string;
+  userId: string; // Associate event with a user
 }
 
-const initialState: FormState[] = [];
+interface EventsState {
+  [userId: string]: FormState[]; // Store events under each userId
+}
+
+const initialState: EventsState = {};
 
 const generateId = () => `${Date.now()}-${Math.floor(Math.random() * 10000)}`;
 
@@ -22,12 +27,25 @@ const eventSlice = createSlice({
   initialState,
   reducers: {
     addEvent: (state, action: PayloadAction<Omit<FormState, 'id'>>) => {
-      state.push({...action.payload, id: generateId()});
+      const {userId} = action.payload;
+      if (!state[userId]) {
+        state[userId] = [];
+      }
+      state[userId].push({...action.payload, id: generateId()});
     },
-    deleteEvent: (state, action: PayloadAction<string>) => {
-      return state.filter(event => event.id !== action.payload);
+    deleteEvent: (
+      state,
+      action: PayloadAction<{userId: string; eventId: string}>,
+    ) => {
+      if (state[action.payload.userId]) {
+        state[action.payload.userId] = state[action.payload.userId].filter(
+          event => event.id !== action.payload.eventId,
+        );
+      }
     },
-    resetEvents: () => initialState,
+    resetEvents: (state, action: PayloadAction<string>) => {
+      state[action.payload] = [];
+    },
   },
 });
 
